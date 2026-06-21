@@ -1,0 +1,38 @@
+services:
+
+  # ── Odoo 17 (built from source) ───────────────────────────────────────────────
+  # No DB service here — reuses the already-running mypostgresql_db-container,
+  # reachable over the shared external "my_docker_network" at :5432.
+  odoo:
+    build:
+      context: ..                       # project root, so the Dockerfile can see odoo/
+      dockerfile: dockerspace/Dockerfile
+    image: myodoo-image:17
+    container_name: myodoo-app
+    restart: unless-stopped
+    ports:
+      - "${ODOO_PORT:-8069}:8069"               # web UI
+      - "${ODOO_LONGPOLLING_PORT:-8072}:8072"   # longpolling (live chat / bus)
+    environment:
+      LOG_MIRROR_ROOT: /mountspace/logs/myworkspace/projectspace/myodoo
+      # Odoo only auto-reads odoo.conf next to odoo-bin on Windows; on Linux it
+      # uses ~/.odoorc unless told otherwise. Point it at our in-source config.
+      ODOO_RC: /myodoo/odoo/odoo.conf
+    volumes:
+      - ../../../mountspace/myodoo/data:/mountspace/myodoo/data  # filestore (attachments, sessions)
+      - ../odoo:/myodoo/odoo                        # Odoo source — mounted, live edits
+      - ../addons:/myodoo/addons                    # your custom / OCA modules
+      - ../../../mountspace/logs:/mountspace/logs   # mirror-logging mount
+    networks:
+      - my_docker_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8069/web/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+# my_docker_network is created/owned by mypostgresql_db. We attach as external.
+networks:
+  my_docker_network:
+    external: true
