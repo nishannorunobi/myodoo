@@ -2,12 +2,12 @@
 
 Odoo **Community** edition for building a company website + eCommerce store.
 Runs as a single `odoo` container that **reuses the existing PostgreSQL container**
-(`mypostgresql_db-container`) over the shared `ums-network` Docker network.
+(`mypostgresql_db-container`) over the shared `my_docker_network` Docker network.
 
 ## Architecture
 
 ```
-┌─────────────────┐         ums-network          ┌──────────────────────────┐
+┌─────────────────┐         my_docker_network          ┌──────────────────────────┐
 │  myodoo-app     │ ───────────────────────────► │ mypostgresql_db-container │
 │  (odoo:17)      │   db_host=mypostgresql_db     │   (postgres:16)           │
 │  :8069 web      │   db_user=odoo                │   role: odoo (CREATEDB)   │
@@ -23,7 +23,7 @@ Runs as a single `odoo` container that **reuses the existing PostgreSQL containe
 
 | File | Purpose |
 |---|---|
-| `docker-compose.yml` | The `odoo` service; attaches to external `ums-network` |
+| `docker-compose.yml` | The `odoo` service; attaches to external `my_docker_network` |
 | `.env` | Odoo version + host ports (DB creds reference only) |
 | `config/odoo.conf` | Server config — **DB credentials live here** (single source of truth) |
 | `addons/` | Drop custom / OCA modules here (mounted at `/mnt/extra-addons`) |
@@ -54,7 +54,7 @@ This creates the `odoo` role **with `CREATEDB`**, the `myodoo` database (owned b
 
 ### 2. Allow the connection in `pg_hba.conf`
 
-Odoo connects from another container over `ums-network` (not localhost), so the
+Odoo connects from another container over `my_docker_network` (not localhost), so the
 Postgres cluster must accept that. Ensure `pg_hba.conf` has a line allowing the
 Docker subnet, e.g.:
 
@@ -94,5 +94,5 @@ Then open **http://localhost:8069**:
   (mirror-logging convention; Promtail → Loki → Grafana picks it up).
 - **Security:** change `admin_passwd` in `config/odoo.conf` and the DB password
   before exposing this beyond localhost.
-- **Prereq:** the Postgres project must be started first (it creates `ums-network`
+- **Prereq:** the Postgres project must be started first (it creates `my_docker_network`
   and runs the DB). `start.sh` checks for both and exits with guidance if missing.

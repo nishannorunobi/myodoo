@@ -2,7 +2,7 @@ services:
 
   # ── Odoo (Community) ──────────────────────────────────────────────────────────
   # Database is NOT defined here — Odoo reuses the existing mypostgresql_db-container
-  # reachable over the shared external "ums-network" at mypostgresql_db-container:5432.
+  # reachable over the shared external "my_docker_network" at mypostgresql_db-container:5432.
   odoo:
     image: odoo:${ODOO_VERSION}
     container_name: myodoo-app
@@ -18,7 +18,7 @@ services:
       - ./addons:/mnt/extra-addons                      # your custom / OCA modules
       - ../../mountspace/logs:/mountspace/logs          # mirror-logging mount
     networks:
-      - ums-network
+      - my_docker_network
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8069/web/health || exit 1"]
       interval: 15s
@@ -29,7 +29,7 @@ services:
 volumes:
   myodoo-data:
 
-# ums-network is created/owned by mypostgresql_db (start.sh). We attach to it as external.
+# my_docker_network is created/owned by mypostgresql_db (start.sh). We attach to it as external.
 networks:
-  ums-network:
+  my_docker_network:
     external: true

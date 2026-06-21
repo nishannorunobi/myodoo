@@ -19,8 +19,8 @@ GREEN="\033[32m"; YELLOW="\033[33m"; RED="\033[31m"; BOLD="\033[1m"; RESET="\033
 source .env
 
 # ── Preflight: shared network must exist (created by mypostgresql_db/start.sh) ──
-if ! docker network inspect ums-network &>/dev/null; then
-    echo -e "${RED}[ERROR]${RESET} Docker network 'ums-network' not found."
+if ! docker network inspect my_docker_network &>/dev/null; then
+    echo -e "${RED}[ERROR]${RESET} Docker network 'my_docker_network' not found."
     echo -e "        Start the Postgres project first: ${BOLD}projectspace/mypostgresql_db/dockerspace/host_scripts/start.sh${RESET}"
     exit 1
 fi
@@ -42,7 +42,7 @@ docker compose up -d
 echo ""
 echo -e "${GREEN}${BOLD}==> Odoo is starting${RESET}"
 echo -e "    Web UI    : ${BOLD}http://localhost:${ODOO_PORT}${RESET}"
-echo -e "    Database  : ${BOLD}${DB_USER}@mypostgresql_db-container:${DB_PORT}${RESET} (over ums-network)"
+echo -e "    Database  : ${BOLD}${DB_USER}@mypostgresql_db-container:${DB_PORT}${RESET} (over my_docker_network)"
 echo ""
 echo -e "    ${YELLOW}First run:${RESET} create the 'odoo' Postgres role first (see readme.md), then open the"
 echo -e "    web UI to create a database and install the ${BOLD}Website${RESET} + ${BOLD}eCommerce${RESET} apps."
