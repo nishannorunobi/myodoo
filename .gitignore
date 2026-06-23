@@ -2,5 +2,11 @@
 # Logs
 *.log
 
+# odoo-agent secrets + runtime
+odoo-agent/agent.conf
+odoo-agent/memory/
+odoo-agent/__pycache__/
+odoo-agent/**/__pycache__/
+
 # Local env overrides (keep .env tracked as the template; ignore secrets overrides)
 .env.local

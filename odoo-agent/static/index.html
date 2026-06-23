@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Odoo Agent — myodoo</title>
+<link rel="stylesheet" href="/static/css/base.css">
+<link rel="stylesheet" href="/static/css/layout.css">
+<link rel="stylesheet" href="/static/css/controls.css">
+<link rel="stylesheet" href="/static/css/chat.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <div class="header-logo">
+      <span class="header-icon">🟣</span>
+      <div>
+        <div class="header-title">Odoo Agent</div>
+        <div class="header-sub">myodoo-app · port 8896</div>
+      </div>
+    </div>
+    <div class="header-badges">
+      <div class="badge">
+        <span class="dot unknown" id="odoo-dot"></span>
+        <span class="badge-label">Odoo</span>
+      </div>
+      <div class="badge">
+        <span class="dot unknown" id="lp-dot"></span>
+        <span class="badge-label">Longpolling</span>
+      </div>
+      <button class="btn-icon" onclick="window._app.refresh()">↺ Refresh</button>
+    </div>
+  </header>
+
+  <!-- ── Body ── -->
+  <div class="body">
+
+    <!-- Left nav -->
+    <nav class="nav">
+      <button class="nav-item" data-section="service" onclick="window._app.switchSection('service')">
+        <span class="nav-icon">⚡</span><span class="nav-label">Service</span>
+      </button>
+      <div class="nav-divider"></div>
+      <button class="nav-item" data-section="chat" onclick="window._app.switchSection('chat')">
+        <span class="nav-icon">💬</span><span class="nav-label">AI Chat</span>
+      </button>
+    </nav>
+
+    <!-- Content -->
+    <main class="content">
+
+      <!-- ── Service section ── -->
+      <div class="section-panel section" data-section="service">
+        <div class="section-title">Odoo Service</div>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:20px;line-height:1.5">
+          Start, stop and health-check the Odoo 17 process running in this container.
+          Odoo reuses <strong style="color:var(--text2)">mypostgresql_db</strong> over my_docker_network.
+        </p>
+
+        <!-- Tools discovered from the agent (tools/*/tool.conf), rendered by stack.js -->
+        <div class="service-grid" id="tools-grid">
+          <div class="field-row" style="color:var(--text3)">Loading…</div>
+        </div>
+
+        <!-- Health fields -->
+        <div class="section-title" style="margin-top:24px">Health Status</div>
+        <div class="fields" id="health-fields">
+          <div class="field-row" style="color:var(--text3)">Loading…</div>
+        </div>
+      </div>
+
+      <!-- ── Chat section ── -->
+      <div class="section-panel" data-section="chat" style="display:none;height:100%;overflow:hidden">
+        <div class="chat-wrap">
+          <div class="chat-toolbar">
+            <span class="chat-toolbar-title">💬 Odoo Assistant</span>
+            <button class="btn btn-secondary btn-sm" onclick="window._app.chat.clear()">Clear history</button>
+          </div>
+          <div class="chat-msgs" id="chat-msgs">
+            <div class="chat-empty">Ask the odoo agent anything…<br>
+              <span style="font-size:11px;color:var(--text3);display:block;margin-top:8px">
+                Try: "is Odoo healthy?", "how do I install a custom module?",
+                "what does this traceback mean?"
+              </span>
+            </div>
+          </div>
+          <div class="chat-input-row">
+            <textarea class="chat-input" id="chat-input" rows="2"
+              placeholder="Ask about the Odoo service, modules, config…"
+              onkeydown="window._app.chat.keydown(event)"></textarea>
+            <button class="chat-send" id="chat-send" onclick="window._app.chat.send()">Send</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div><!-- /body -->
+
+  <!-- ── Action Log (bottom, always visible) ── -->
+  <div class="log-panel collapsed" id="log-panel">
+    <div class="log-header" onclick="window._app.log.toggle()">
+      <span class="log-header-title">
+        ⬛ Action Log
+        <span class="log-badge" id="log-badge">0 lines</span>
+      </span>
+      <div class="log-header-actions" onclick="event.stopPropagation()">
+        <button class="log-action-btn" onclick="window._app.log.clear()">Clear</button>
+        <button class="log-action-btn" id="log-toggle-btn"
+          onclick="window._app.log.toggle()">⌃</button>
+      </div>
+    </div>
+    <div class="log-body" id="log-body">
+      <div class="log-empty">No actions run yet.</div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script src="/static/js/lib/utils.js"></script>
+<script src="/static/js/lib/api.js"></script>
+<script src="/static/js/panels/log.js"></script>
+<script src="/static/js/panels/health.js"></script>
+<script src="/static/js/panels/stack.js"></script>
+<script src="/static/js/panels/chat.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>

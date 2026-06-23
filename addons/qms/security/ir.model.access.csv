@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_qms_service_plan_user,qms.service.plan.user,model_qms_service_plan,base.group_user,1,1,1,1
+access_qms_service_user,qms.service.user,model_qms_service,base.group_user,1,1,1,1
+access_qms_queue_user,qms.queue.user,model_qms_queue,base.group_user,1,1,1,1
+access_qms_ticket_user,qms.ticket.user,model_qms_ticket,base.group_user,1,1,1,1

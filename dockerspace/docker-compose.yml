@@ -13,8 +13,11 @@ services:
     ports:
       - "${ODOO_PORT:-8069}:8069"               # web UI
       - "${ODOO_LONGPOLLING_PORT:-8072}:8072"   # longpolling (live chat / bus)
+      - "${ODOO_AGENT_PORT:-8896}:8896"         # odoo-agent dashboard / API
     environment:
+      CONTAINER_WORKDIR: /myodoo
       LOG_MIRROR_ROOT: /mountspace/logs/myworkspace/projectspace/myodoo
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}   # passed from host env; optional (odoo-agent chat)
       # Odoo only auto-reads odoo.conf next to odoo-bin on Windows; on Linux it
       # uses ~/.odoorc unless told otherwise. Point it at our in-source config.
       ODOO_RC: /myodoo/odoo/odoo.conf
@@ -22,9 +25,20 @@ services:
       - ../../../mountspace/myodoo/data:/mountspace/myodoo/data  # filestore (attachments, sessions)
       - ../odoo:/myodoo/odoo                        # Odoo source — mounted, live edits
       - ../addons:/myodoo/addons                    # your custom / OCA modules
+      - ../odoo-agent:/myodoo/odoo-agent            # odoo-agent source — mounted, live edits
       - ../../../mountspace/logs:/mountspace/logs   # mirror-logging mount
     networks:
-      - my_docker_network
+      my_docker_network:
+        ipv4_address: 172.28.0.30      # static IP within my_docker_network's subnet
+    # Agent-as-startup: the container command launches the odoo-agent, which then
+    # starts Odoo as a managed tool; tail keeps the container alive. This lets the
+    # agent supervise (start/stop/health) the Odoo service.
+    command: >
+      bash -c "
+        bash /myodoo/odoo-agent/start.sh;
+        bash /myodoo/odoo-agent/tools/odoo/start.sh &
+        exec tail -f /dev/null
+      "
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8069/web/health || exit 1"]
       interval: 15s

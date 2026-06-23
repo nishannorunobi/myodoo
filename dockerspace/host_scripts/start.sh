@@ -14,11 +14,10 @@ fi
 cd "$(dirname "${BASH_SOURCE[0]}")/.."   # dockerspace/ (compose + .env live here)
 DB=myodoo
 
-# Preflight: Odoo reuses the running Postgres over my_docker_network.
-docker network inspect my_docker_network >/dev/null 2>&1 \
-    || { echo "[ERROR] my_docker_network not found — start mypostgresql_db first."; exit 1; }
+# Preflight: ensure the shared network exists (idempotent), then verify the DB is up.
+bash "$_WS_ROOT/dockerspace/docker_network.sh"
 docker inspect -f '{{.State.Running}}' mypostgresql_db-container 2>/dev/null | grep -q true \
-    || { echo "[ERROR] mypostgresql_db-container is not running."; exit 1; }
+    || { echo "[ERROR] mypostgresql_db-container is not running — start it first."; exit 1; }
 
 echo "==> Building image..."
 docker compose build
