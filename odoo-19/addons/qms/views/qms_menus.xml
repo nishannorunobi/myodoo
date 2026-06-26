@@ -1,0 +1,16 @@
+<odoo>
+    <!-- The QMS Console: an OWL client action with a collapsible left sidebar.
+         Navigation lives in the sidebar (not the top bar), so the top bar stays
+         clean as more sections are added. The act_window actions below are
+         opened from the sidebar via doAction(). -->
+    <record id="action_qms_console" model="ir.actions.client">
+        <field name="name">QMS Console</field>
+        <field name="tag">qms_console</field>
+    </record>
+
+    <!-- Top-level app → opens straight into the Console. Internal users only. -->
+    <menuitem id="menu_qms_root" name="Queue Management System"
+              groups="base.group_user" sequence="10"/>
+    <menuitem id="menu_qms_home" name="Home" parent="menu_qms_root"
+              action="action_qms_console" sequence="10"/>
+</odoo>

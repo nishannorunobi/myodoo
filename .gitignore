@@ -10,3 +10,7 @@ odoo-agent/**/__pycache__/
 
 # Local env overrides (keep .env tracked as the template; ignore secrets overrides)
 .env.local
+
+# Odoo source trees (vendored, very large — keep on disk, never commit)
+odoo-17/odoo/
+odoo-19/odoo/

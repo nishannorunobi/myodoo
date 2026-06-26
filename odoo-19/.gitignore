@@ -1,0 +1,6 @@
+
+# Logs
+*.log
+
+# Local env overrides (keep .env tracked as the template; ignore secrets overrides)
+.env.local

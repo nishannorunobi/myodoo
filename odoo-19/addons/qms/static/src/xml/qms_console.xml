@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="qms.QmsConsole" owl="1">
+        <div class="o_qms_console d-flex">
+
+            <!-- Collapsible left sidebar -->
+            <div class="o_qms_sidebar border-end bg-light p-2"
+                 t-att-class="{ 'o_qms_collapsed': state.collapsed }">
+                <button class="btn btn-light w-100 mb-3 text-start"
+                        t-on-click="toggle" title="Toggle menu">
+                    <i class="fa fa-bars"/>
+                </button>
+                <ul class="nav flex-column">
+                    <li class="nav-item" t-foreach="navItems" t-as="item" t-key="item.action">
+                        <a class="nav-link text-truncate" href="#"
+                           t-on-click.prevent="() => this.openAction(item.action)"
+                           t-att-title="item.label">
+                            <i class="fa me-2" t-att-class="item.icon"/>
+                            <span t-if="!state.collapsed" t-esc="item.label"/>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Content area (dashboard) -->
+            <div class="o_qms_content flex-grow-1 p-4">
+                <h1 class="mb-4">Queue Management System</h1>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <div class="display-6" t-esc="state.stats.waiting or 0"/>
+                                <div class="text-muted">Waiting</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <div class="display-6" t-esc="state.stats.serving or 0"/>
+                                <div class="text-muted">Serving</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <div class="display-6" t-esc="state.stats.queues or 0"/>
+                                <div class="text-muted">Queues</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <div class="display-6" t-esc="state.stats.services or 0"/>
+                                <div class="text-muted">Services</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="/qms/book" target="_blank" class="btn btn-outline-primary">
+                    <i class="fa fa-ticket me-2"/>Public booking page
+                </a>
+            </div>
+        </div>
+    </t>
+
+</templates>

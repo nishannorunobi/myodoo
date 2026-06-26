@@ -1,0 +1,70 @@
+<odoo>
+    <!-- Declarative views for qms.queue (QueueModel). Uses spec field names. -->
+
+    <record id="view_qms_queue_list" model="ir.ui.view">
+        <field name="name">qms.queue.list</field>
+        <field name="model">qms.queue</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="quid"/>
+                <field name="q_name"/>
+                <field name="service_id"/>
+                <field name="ticket_count"/>
+                <field name="created_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_qms_queue_form" model="ir.ui.view">
+        <field name="name">qms.queue.form</field>
+        <field name="model">qms.queue</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="q_name"/>
+                        <h1><field name="q_name" placeholder="e.g. Counter A"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="quid" readonly="1"/>
+                            <field name="service_id"/>
+                        </group>
+                        <group>
+                            <field name="created_at"/>
+                            <field name="updated_at"/>
+                        </group>
+                    </group>
+                    <field name="q_description" placeholder="Description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_qms_queue_search" model="ir.ui.view">
+        <field name="name">qms.queue.search</field>
+        <field name="model">qms.queue</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="q_name"/>
+                <field name="quid"/>
+                <field name="service_id"/>
+                <group>
+                    <filter name="group_service" string="Service"
+                            context="{'group_by': 'service_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_qms_queue" model="ir.actions.act_window">
+        <field name="name">Queues</field>
+        <field name="res_model">qms.queue</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_qms_queue_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first queue</p>
+            <p>A queue belongs to a service. Customers take tickets in a queue.</p>
+        </field>
+    </record>
+</odoo>

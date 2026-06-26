@@ -1,0 +1,76 @@
+<odoo>
+    <!-- FEATURE 8 — Public "Take a ticket" page (Category 7). -->
+
+    <template id="qms_book_form" name="Book a Queue Ticket">
+        <t t-call="website.layout">
+            <div class="container my-5" style="max-width: 640px;">
+                <h1 class="mb-4">Book a ticket</h1>
+
+                <t t-if="error">
+                    <div class="alert alert-danger" role="alert">
+                        <span t-esc="error"/>
+                    </div>
+                </t>
+
+                <form action="/qms/book/submit" method="post">
+                    <input type="hidden" name="csrf_token"
+                           t-att-value="request.csrf_token()"/>
+
+                    <div class="mb-3">
+                        <label for="quid" class="form-label">Queue</label>
+                        <select id="quid" name="quid" class="form-select" required="required">
+                            <option value="">— Choose a queue —</option>
+                            <t t-foreach="queues" t-as="queue">
+                                <!-- Show "Service — Queue" so the choice is clear. -->
+                                <option t-att-value="queue.id">
+                                    <t t-esc="queue.service_id.name"/> — <t t-esc="queue.q_name"/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="customer_name" class="form-label">Your name</label>
+                        <input type="text" id="customer_name" name="customer_name"
+                               class="form-control" placeholder="Optional"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="customer_phone" class="form-label">Phone</label>
+                        <input type="text" id="customer_phone" name="customer_phone"
+                               class="form-control" placeholder="Optional"/>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-ticket me-2"/>Get my ticket
+                    </button>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <template id="qms_book_success" name="Ticket Booked">
+        <t t-call="website.layout">
+            <div class="container my-5 text-center" style="max-width: 640px;">
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">You're in the queue!</h4>
+                    <p class="mb-1">Your ticket number is</p>
+                    <h1 class="display-4 my-3">#<span t-esc="ticket.tid"/></h1>
+                    <p class="mb-1">Queue: <strong t-esc="ticket.quid.q_name"/></p>
+                    <p class="mb-0">
+                        Position in line: <strong t-esc="ticket.position"/>
+                    </p>
+                </div>
+                <a href="/qms/book" class="btn btn-secondary">Book another</a>
+            </div>
+        </t>
+    </template>
+
+    <!-- The "demo link" in the public website's top navigation menu. -->
+    <record id="menu_qms_book_website" model="website.menu">
+        <field name="name">Book a Ticket</field>
+        <field name="url">/qms/book</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">50</field>
+    </record>
+</odoo>

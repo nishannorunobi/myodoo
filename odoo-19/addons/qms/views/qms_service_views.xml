@@ -1,0 +1,78 @@
+<odoo>
+    <!-- Declarative views for qms.service (Category 1). -->
+
+    <record id="view_qms_service_list" model="ir.ui.view">
+        <field name="name">qms.service.list</field>
+        <field name="model">qms.service</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="customer_company_id"/>
+                <field name="queue_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_qms_service_form" model="ir.ui.view">
+        <field name="name">qms.service.form</field>
+        <field name="model">qms.service</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,running,expired"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Billing"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="plan_id"/>
+                            <field name="customer_company_id"/>
+                            <field name="code"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="active"/>
+                            <field name="color" widget="color_picker"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="What is this service for?"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_qms_service_search" model="ir.ui.view">
+        <field name="name">qms.service.search</field>
+        <field name="model">qms.service</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="customer_company_id"/>
+                <filter name="archived" string="Archived" domain="[('active','=',False)]"/>
+                <group>
+                    <filter name="group_company" string="Customer Company"
+                            context="{'group_by': 'customer_company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_qms_service" model="ir.actions.act_window">
+        <field name="name">Services</field>
+        <field name="res_model">qms.service</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_qms_service_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first service</p>
+            <p>A service is offered by a subscriber company, e.g. Billing or Pharmacy.</p>
+        </field>
+    </record>
+</odoo>

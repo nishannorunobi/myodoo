@@ -22,11 +22,11 @@ services:
       # uses ~/.odoorc unless told otherwise. Point it at our in-source config.
       ODOO_RC: /myodoo/odoo/odoo.conf
     volumes:
-      - ../../../mountspace/myodoo/data:/mountspace/myodoo/data  # filestore (attachments, sessions)
+      - ../../../../mountspace/myodoo/data:/mountspace/myodoo/data  # filestore (attachments, sessions)
       - ../odoo:/myodoo/odoo                        # Odoo source — mounted, live edits
       - ../addons:/myodoo/addons                    # your custom / OCA modules
-      - ../odoo-agent:/myodoo/odoo-agent            # odoo-agent source — mounted, live edits
-      - ../../../mountspace/logs:/mountspace/logs   # mirror-logging mount
+      - ../../odoo-agent:/myodoo/odoo-agent         # odoo-agent source (SHARED, lives at myodoo root) — mounted, live edits
+      - ../../../../mountspace/logs:/mountspace/logs   # mirror-logging mount
     networks:
       my_docker_network:
         ipv4_address: 172.28.0.30      # static IP within my_docker_network's subnet

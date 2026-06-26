@@ -1,0 +1,42 @@
+services:
+
+  # ── Odoo 19 (built from source) ───────────────────────────────────────────────
+  # Parallel to the Odoo 17 stack. No DB service here — reuses the already-running
+  # mypostgresql_db-container over the shared external "my_docker_network".
+  # Distinct port / IP / image / container / database so 17 and 19 run side by side.
+  # Minimal startup: runs odoo-bin directly (no odoo-agent yet — added later).
+  odoo:
+    build:
+      context: ..                       # odoo-19/ root, so the Dockerfile can see odoo/
+      dockerfile: dockerspace/Dockerfile
+    image: myodoo-image:19
+    container_name: myodoo19-app
+    restart: unless-stopped
+    ports:
+      - "${ODOO_PORT:-8079}:8069"               # web UI        (host 8079 → container 8069)
+      - "${ODOO_LONGPOLLING_PORT:-8082}:8072"   # longpolling   (host 8082 → container 8072)
+    environment:
+      CONTAINER_WORKDIR: /myodoo
+      LOG_MIRROR_ROOT: /mountspace/logs/myworkspace/projectspace/myodoo/odoo-19
+      # odoo-bin reads its config from the ODOO_RC env var (mounted file below).
+      ODOO_RC: /myodoo/odoo/odoo.conf
+    volumes:
+      - ../../../../mountspace/myodoo/odoo-19/data:/mountspace/myodoo/odoo-19/data  # filestore
+      - ../odoo:/myodoo/odoo                        # Odoo 19 source — mounted, live edits
+      - ../odoo.conf:/myodoo/odoo/odoo.conf         # config — mounted over source dir, survives re-download
+      - ../addons:/myodoo/addons                    # your custom / OCA modules
+      - ../../../../mountspace/logs:/mountspace/logs # mirror-logging mount
+    networks:
+      my_docker_network:
+        ipv4_address: 172.28.0.31      # distinct from 17's .30
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8069/web/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+# my_docker_network is created/owned by mypostgresql_db. We attach as external.
+networks:
+  my_docker_network:
+    external: true

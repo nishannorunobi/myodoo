@@ -1,0 +1,84 @@
+<odoo>
+    <!-- Declarative views for qms.ticket (TicketModel). Uses spec field names. -->
+
+    <record id="view_qms_ticket_list" model="ir.ui.view">
+        <field name="name">qms.ticket.list</field>
+        <field name="model">qms.ticket</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state in ('done','cancelled')"
+                  decoration-bf="state == 'serving'">
+                <field name="tid"/>
+                <field name="ticket_name"/>
+                <field name="quid"/>
+                <field name="customer_id"/>
+                <field name="position"/>
+                <field name="state"/>
+                <field name="created_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_qms_ticket_form" model="ir.ui.view">
+        <field name="name">qms.ticket.form</field>
+        <field name="model">qms.ticket</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="waiting,called,serving,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="ticket_name"/>
+                        <h1><field name="ticket_name" placeholder="Ticket name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="tid" readonly="1"/>
+                            <field name="quid"/>
+                            <field name="customer_id"/>
+                        </group>
+                        <group>
+                            <field name="position"/>
+                            <field name="notified"/>
+                            <field name="created_at"/>
+                        </group>
+                    </group>
+                    <field name="ticket_description" placeholder="Description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_qms_ticket_search" model="ir.ui.view">
+        <field name="name">qms.ticket.search</field>
+        <field name="model">qms.ticket</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="ticket_name"/>
+                <field name="customer_id"/>
+                <field name="quid"/>
+                <filter name="waiting" string="Waiting" domain="[('state','=','waiting')]"/>
+                <filter name="serving" string="Serving" domain="[('state','=','serving')]"/>
+                <group>
+                    <filter name="group_queue" string="Queue"
+                            context="{'group_by': 'quid'}"/>
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_qms_ticket" model="ir.actions.act_window">
+        <field name="name">Tickets</field>
+        <field name="res_model">qms.ticket</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_qms_ticket_search"/>
+        <field name="context">{'search_default_waiting': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No tickets yet</p>
+            <p>Tickets appear here as customers join a queue.</p>
+        </field>
+    </record>
+</odoo>
